@@ -45,7 +45,8 @@ try:
             " Usage1: slides_extractor.py {filename}\n",
             "Usage2: slides_extractor.py [OPTION] [VALUE(s)]\n\n",
             "-h, --help : show this help\n",
-            "-m, --multiple: multiple files, write names of all the files separated by space"
+            "-m, --multiple: multiple files, write names of all the files separated by space\n",
+            "Note: The filename should not contain any spaces. So, either use inverted-commas or put ' \ ' before space"
             )
         quit()
 			
@@ -88,7 +89,7 @@ def ImgCmp(img1,img2):
 def Compare(lastframe,frame,newframe):
     pcmp = ImgCmp(lastframe,frame)
     ncmp = ImgCmp(frame,newframe )
-    diff = pcmp-ncmp
+    diff = abs(pcmp-ncmp) # new change: added abs
     # attempt to ignore mouse motion
     # marker = np.sum(diff < 4)
     # if marker >= 2:
@@ -100,16 +101,14 @@ def Compare(lastframe,frame,newframe):
 
 ### Extractor
 # Create a cache directory
-cache_dir = ".cache"
+cache_dir = "cache"
 while os.path.isdir(cache_dir):
     cache_dir+="1"
 os.mkdir(cache_dir)
 
 for videoFile in videoFiles:
     print("Starting processing for ",videoFile)
-    #ensure cache is clean
-    for f in os.listdir(cache_dir):
-        os.remove(cache_dir+"/"+f)
+    #cache is expected to be empty
     count = 0
     frame=np.zeros((1080,1920,3))
     lastframe=np.zeros((1080,1920,3))
